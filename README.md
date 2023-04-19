@@ -19,6 +19,8 @@ php -r "unlink('composer-setup.php');"
 #### After installing the library you should see a 'vendor' folder with other files
 
 ## Setting up database
+API tries to connect to localhost on default myslq port 3306
+Username / Password and other configurations can be modified on file *DatabaseConnector.php*
 
 ### Using mysql for the sql server
 #### In xaml you can use the xamp built in mysql server no need to install
