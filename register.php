@@ -12,12 +12,12 @@ try{
     $password = trim($_POST["password"]);
     if(!isset($_POST["username"]) || !isset($_POST["password"]) ){
         http_response_code(400);
-        exit("Bad Request");
+        throw new Exception("Bad Request");
     }
     $db = getDb();
     if($db == null){
         http_response_code(502);
-        exit("DB Connection Issue");
+        throw new Exception("DB Connection Issue");
     }
     $userGateway = new UserGateway($db);
 
@@ -25,13 +25,13 @@ try{
     $existingUser = $userGateway->findByUsername($username);
     if($existingUser != null){
         http_response_code(400);
-        exit("Username already exists");
+        throw new Exception("Username already exists");
     }
 
     //validate passoword
     if(strlen($password) < 8){
         http_response_code(400);
-        exit("Password too short. Minimum 8 characters");
+        throw new Exception("Password too short. Minimum 8 characters");
     }
 
     $user = array("username" => $username, "password"=> $password);
@@ -39,5 +39,5 @@ try{
 
 
 }catch(Exception $e){
-    exit($ex->getMessage());
+    exit($e->getMessage());
 }
