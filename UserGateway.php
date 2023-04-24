@@ -70,6 +70,27 @@ class UserGateway {
         }
     }
 
+    public function findByUsername($username){
+        $statement = "
+            SELECT 
+                id, username
+            FROM
+                user
+            WHERE username = :username;
+        ";
+
+        try {
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array(
+                'username' => $username,
+            ));
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return $result;
+        } catch (\PDOException $e) {
+            exit($e->getMessage());
+        }
+    }
+
     public function insert(Array $input)
     {
         $statement = "
