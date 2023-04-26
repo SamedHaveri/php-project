@@ -6,6 +6,7 @@ function getDb(){
     $dbConnection = (new DatabaseConnector())->getConnection();
     return $dbConnection;
 }
+session_start();
 
 try{
     $username = trim($_POST["username"]);
@@ -36,8 +37,17 @@ try{
 
     $user = array("username" => $username, "password"=> $password);
     $userGateway->insert($user);
-
+    $_SESSION['token']=$username;
+    redirect("/index.php");
 
 }catch(Exception $e){
+    $_SESSION['login_error']=$e->getMessage();
+    redirect("/Login.php");
     exit($e->getMessage());
+}
+
+function redirect($url, $statusCode = 303)
+{
+   header('Location: ' . $url, true, $statusCode);
+   die();
 }

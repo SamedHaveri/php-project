@@ -1,11 +1,8 @@
 <?php
 declare(strict_types=1);
-use Firebase\JWT\JWT;
-require_once('./vendor/autoload.php');
-include("./jwtUtil.php");
 include("./DatabaseConnector.php");
 include("./UserGateway.php");
-
+session_start();
 
 function getDb(){
     $dbConnection = (new DatabaseConnector())->getConnection();
@@ -33,23 +30,16 @@ try{
         throw new Exception("Unauthorized");
     }
 
-    $issuedAt   = new DateTimeImmutable();
-    $expire     = $issuedAt->modify($expiry)->getTimestamp();      // Add 60 seconds
-    $username   = $username;                                      // Retrieved from filtered POST data
-
-    $data = [
-        'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
-        'iss'  => $serverName,                       // Issuer
-        'nbf'  => $issuedAt->getTimestamp(),         // Not before
-        'exp'  => $expire,                           // Expire
-        'userName' => $username,                     // User name
-    ];
-
-    echo JWT::encode(
-        $data,
-        $secretKey,
-        $alg
-    );
+    $_SESSION['token']=$username;
+    redirect("/index.php");
 }catch(Exception $ex){
+    $_SESSION['login_error']=$ex->getMessage();
+    redirect("/Login.php");
     exit($ex->getMessage());
+}
+
+function redirect($url, $statusCode = 303)
+{
+   header('Location: ' . $url, true, $statusCode);
+   die();
 }
